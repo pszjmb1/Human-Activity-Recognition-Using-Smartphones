@@ -19,7 +19,7 @@ tidyData <- function(url="https://d396qusza40orc.cloudfront.net/getdata%2Fprojec
   # Returns:
   #   A tidy data set with the average of each variable 
   #   from the Human-Activity-Recognition-Using-Smartphones dataset (both training and testing data)
-  #   for each activity and each subject.
+  #   for each activity and each subject. Note that the file "harus.txt" is also written to dir/data.
     
   # Download and extract the zip file.
   aDir <- getData(url, dir, name)
@@ -30,7 +30,7 @@ tidyData <- function(url="https://d396qusza40orc.cloudfront.net/getdata%2Fprojec
   measurements <- mergeTestAndTrainDatasets()
   # Extract only the measurements on the mean and standard deviation for each measurement. 
   print("Extracting data...")
-  measurements<-cbind(measurements$subjects,measurements$labels,measurements[grepl("mean|std", names(measurements))])
+  measurements<-cbind(measurements$subjects,measurements$activities,measurements[grepl("mean|std", names(measurements), ignore.case = TRUE)])
   colnames(measurements)[1] <- 'subjects' # Fix cbind's weird namechange
   colnames(measurements)[2] <- 'activities'   # Fix cbind's weird namechange
   # Use descriptive activity names to name the activities in the data set
@@ -39,8 +39,11 @@ tidyData <- function(url="https://d396qusza40orc.cloudfront.net/getdata%2Fprojec
   measurements$activities <- names(codes)[match(measurements$activities, codes)]
   # Create a tidy data set From the data set in step 4, with the average of each variable for each activity and each subject.  
   res <- ddply(tidy, .(labels, subjects), numcolwise(mean))
-  print("Tidy data complete.")
-  res
+  print("Writing output to file...")
+  setwd('../../')
+  write.table(tidy,paste(getwd(),"harus.txt",sep="/"),row.name=FALSE)
+  print("Data analysis complete.")
+  tidy
 }
   
 getData <- function(fileURL, dir, name) {
@@ -83,7 +86,7 @@ mergeTestAndTrainDatasets <- function(){
   testSubject <- read.table('./test/subject_test.txt')
   names(testSubject) <- "subjects"
   yTest <- read.table('./test/y_test.txt')
-  names(yTest) <- "labels"
+  names(yTest) <- "activities"
   xTest <- read.table('./test/x_test.txt')
   featureLabels <- read.table('./features.txt')  
   names(xTest) <- featureLabels$V2
@@ -93,7 +96,7 @@ mergeTestAndTrainDatasets <- function(){
   trainSubject <- read.table('./train/subject_train.txt')
   names(trainSubject) <- "subjects"
   yTrain <- read.table('./train/y_train.txt')
-  names(yTrain) <- "labels"
+  names(yTrain) <- "activities"
   xTrain <- read.table('./train/x_train.txt')
   featureLabels <- read.table('./features.txt')  
   names(xTrain) <- featureLabels$V2
