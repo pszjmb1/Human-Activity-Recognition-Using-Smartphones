@@ -37,6 +37,13 @@ See  LICENSE file in the [corrsponding Github repository](https://github.com/psz
 
 <a id='transform'></a>
 ## 3. Data trasnformation description
+To run the analysis: 
+1. Source the R file run_analysis.R.
+2. Create a directory [DIR] to download data to 
+3. Run the following in R
+tidy <- tidyData(dir="[DIR]",name="harus.zip")
+
+Upon doing so, tidy ought to contain 180 rows and 81 columns of data as described in Variable descrtiption below.
 
 <a id='variable'></a>
 ## 4. Variable descrtiption
