@@ -14,6 +14,8 @@ Note that running the script will download a 61MB file from the Internet (so mak
 
 Also note that re-running the script with the same dir value will not re-download the zip file. See [DIR]/data/harus.zip.download.info.md for download information.
 
+Finally note that the script relies on the plyr library which must be package installed prior to running the script.
+
 ###To run the script
 1. Source the R file run_analysis.R.
 2. Create a directory [DIR] to download data to 

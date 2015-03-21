@@ -29,7 +29,7 @@ tidyData <- function(url="https://d396qusza40orc.cloudfront.net/getdata%2Fprojec
   # Note this is step 1 and 4.
   measurements <- mergeTestAndTrainDatasets()
   # Extract only the measurements on the mean and standard deviation for each measurement. 
-  print("Extracting data...")
+  timeprint("Extracting data...")
   measurements<-cbind(measurements$subjects,measurements$activities,measurements[grepl("mean|std", names(measurements), ignore.case = TRUE)])
   colnames(measurements)[1] <- 'subjects' # Fix cbind's weird namechange
   colnames(measurements)[2] <- 'activities'   # Fix cbind's weird namechange
@@ -38,11 +38,12 @@ tidyData <- function(url="https://d396qusza40orc.cloudfront.net/getdata%2Fprojec
                        sitting=4,  standing=5, laying=6)
   measurements$activities <- names(codes)[match(measurements$activities, codes)]
   # Create a tidy data set From the data set in step 4, with the average of each variable for each activity and each subject.  
+  library(dplyr)
   res <- ddply(tidy, .(labels, subjects), numcolwise(mean))
-  print("Writing output to file...")
+  timeprint("Writing output to file...")
   setwd('../../')
   write.table(tidy,paste(getwd(),"harus.txt",sep="/"),row.name=FALSE)
-  print("Data analysis complete.")
+  timeprint("Data analysis complete.")
   tidy
 }
   
@@ -64,14 +65,15 @@ getData <- function(fileURL, dir, name) {
   
   ## Download data
   if(!file.exists(paste("./data/",name,sep=""))){
-    print("Downloading data...")
+    timeprint("Downloading data...")
     download.file(fileURL, destfile = paste("./data/",name,sep=""), method="curl")
     write(paste("Raw data downloaded from:", fileURL,"\n", date()), file = paste("./data/", name, ".download.info.md", sep=""))
     
     ## Extract data
+    timeprint("Unzipping data...")
     unzip(paste("./data/",name,sep=""),exdir="./data/extract")       
   } else{
-    print("Using existing data.")
+    timeprint("Using existing data.")
   }
   paste("./data/extract/",list.files("./data/extract"),sep="")
 }
@@ -82,7 +84,7 @@ mergeTestAndTrainDatasets <- function(){
   # Returns:
   #   The merged dataset
   
-  print('Loading test data...')
+  timeprint('Loading test data...')
   testSubject <- read.table('./test/subject_test.txt')
   names(testSubject) <- "subjects"
   yTest <- read.table('./test/y_test.txt')
@@ -92,7 +94,7 @@ mergeTestAndTrainDatasets <- function(){
   names(xTest) <- featureLabels$V2
   test<-cbind(testSubject,yTest,xTest)
   
-  print('Loading train data...')
+  timeprint('Loading train data...')
   trainSubject <- read.table('./train/subject_train.txt')
   names(trainSubject) <- "subjects"
   yTrain <- read.table('./train/y_train.txt')
@@ -102,6 +104,15 @@ mergeTestAndTrainDatasets <- function(){
   names(xTrain) <- featureLabels$V2
   train<-cbind(trainSubject,yTrain,xTrain)
   
-  print('Merging datasets...')
+  timeprint('Merging datasets...')
   rbind(test,train)  
+}
+
+timeprint <- function(s){
+  # Prints out the given string with a datestamp
+  #
+  # args:
+  #  s: The string to print
+  s <- paste(format(Sys.time(), "%a %b %d %H:%M:%S %Y"),s,sep="> ")
+  print(s)
 }
