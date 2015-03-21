@@ -20,6 +20,7 @@ tidyData <- function(url="https://d396qusza40orc.cloudfront.net/getdata%2Fprojec
   #   A tidy data set with the average of each variable 
   #   from the Human-Activity-Recognition-Using-Smartphones dataset (both training and testing data)
   #   for each activity and each subject. Note that the file "harus.txt" is also written to dir/data.
+  library('plyr')
     
   # Download and extract the zip file.
   aDir <- getData(url, dir, name)
@@ -37,14 +38,14 @@ tidyData <- function(url="https://d396qusza40orc.cloudfront.net/getdata%2Fprojec
   codes <- c(walking=1, walking_upstairs=2, walking_downstairs=3, 
                        sitting=4,  standing=5, laying=6)
   measurements$activities <- names(codes)[match(measurements$activities, codes)]
-  # Create a tidy data set From the data set in step 4, with the average of each variable for each activity and each subject.  
-  library(dplyr)
-  res <- ddply(tidy, .(labels, subjects), numcolwise(mean))
+  # Create a tidy data set From the data set in step 4, with the average of each variable for each activity and each subject. 
+  timeprint("Generating means...")
+  res <- ddply(measurements, .(activities, subjects), numcolwise(mean))
   timeprint("Writing output to file...")
   setwd('../../')
-  write.table(tidy,paste(getwd(),"harus.txt",sep="/"),row.name=FALSE)
+  write.table(res,paste(getwd(),"harus.txt",sep="/"),row.name=FALSE)
   timeprint("Data analysis complete.")
-  tidy
+  res
 }
   
 getData <- function(fileURL, dir, name) {

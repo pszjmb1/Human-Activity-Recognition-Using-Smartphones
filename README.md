@@ -22,4 +22,4 @@ Finally note that the script relies on the plyr library which must be package in
 3. Run the following in R: tidyData(dir="[DIR]",name="harus.zip")
 - Note that the name value (harus.zip) can be changed to whatever you wish.
 
-Upon doing so, the script will output the text file "harus.txt" to [DIR]/data containing a tidy dataset with 180 rows and 81 columns of data as described in the Variable section of the codebook.
+Upon doing so, the script will output the text file "harus.txt" to [DIR]/data containing a tidy dataset with 180 rows and 88 columns of data as described in the Variable section of the codebook.
